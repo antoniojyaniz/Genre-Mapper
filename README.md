@@ -3,6 +3,8 @@ A lightweight app that predicts a song’s genre from a YouTube link.
 
 Users paste a link, and the app downloads a short audio segment, extracts acoustic features, scales them using a trained model, and displays the predicted genre.
 
+# Video Demo
+
 # How It's Made 
 Tech used: Python, FastAPI, NumPy/SciPy, scikit-learn, librosa, ffmpeg, yt-dlp, HTML/CSS (dark), Docker, Fly.io
 
