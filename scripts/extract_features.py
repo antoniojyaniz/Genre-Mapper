@@ -20,7 +20,6 @@ TMP_DIR = Path("tmp"); TMP_DIR.mkdir(exist_ok=True)
 FEATURE_ORDER_PATH = ARTIFACTS / "feature_order.json"
 LABEL_MAP_PATH = ARTIFACTS / "label_map.json"
 
-# ---------- audio IO ----------
 def _run_ffmpeg_convert(src: str, dst: str, sr: int = SR) -> None:
     cmd = [
         "ffmpeg", "-y", "-v", "error",
@@ -36,14 +35,13 @@ def _run_ffmpeg_convert(src: str, dst: str, sr: int = SR) -> None:
         raise RuntimeError(f"ffmpeg failed on {src}: {err}")
 
 def _load_audio_any(path: str, sr: int = SR) -> np.ndarray:
-    # Try direct load
     try:
         y, _ = librosa.load(path, sr=sr, mono=True)
         if y is None or y.size == 0 or np.all(~np.isfinite(y)):
             raise ValueError("empty/invalid audio after direct load")
         return y
     except Exception:
-        # Fallback: transcode to clean PCM WAV then load
+        #Fallback: transcode to clean PCM WAV then load
         tmp_wav = TMP_DIR / f"{uuid.uuid4().hex}.wav"
         try:
             _run_ffmpeg_convert(path, str(tmp_wav), sr=sr)
@@ -196,3 +194,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
