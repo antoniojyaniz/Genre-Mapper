@@ -1,6 +1,7 @@
 # Genre Mapper
-A lightweight web app that predicts a song’s genre from a YouTube link!
-Users paste a link, and the app downloads a short audio segment, extracts acoustic features, scales them using a trained model, and displays the predicted genre
+A lightweight app that predicts a song’s genre from a YouTube link.
+
+Users paste a link, and the app downloads a short audio segment, extracts acoustic features, scales them using a trained model, and displays the predicted genre.
 
 # How It's Made 
 Tech used: Python, FastAPI, NumPy/SciPy, scikit-learn, librosa, ffmpeg, yt-dlp, HTML/CSS (dark), Docker, Fly.io
@@ -24,59 +25,63 @@ Tech used: Python, FastAPI, NumPy/SciPy, scikit-learn, librosa, ffmpeg, yt-dlp, 
 
 Inside the genre mapper directory 
   ### 0) Python env
-  python -m venv .venv 
+    python -m venv .venv 
   
-  Windows: .\.venv\Scripts\Activate.ps1 
+    Windows: .\.venv\Scripts\Activate.ps1 
   
-  macOS/Linux: source .venv/bin/activate 
+    macOS/Linux: source .venv/bin/activate 
   
-  pip install --upgrade pip
+    pip install --upgrade pip
   
-  pip install -r requirements.txt
+    pip install -r requirements.txt
 
   ### 1) Generate GTZAN metadata and splits
   Download the GTZAN data set
   
-  python scripts/make_metadata_gtzan.py
+    python scripts/make_metadata_gtzan.py
   
-  python scripts/validate_metadata.py
+    python scripts/validate_metadata.py
   
-  python scripts/split_dataset.py --meta metadata.csv --out splits --seed 42
+    python scripts/split_dataset.py --meta metadata.csv --out splits --seed 42
 
   ### 2) Feature extraction
   
-  python scripts/extract_features.py --csv splits/train.csv --out artifacts/train
-  
-  python scripts/extract_features.py --csv splits/val.csv   --out artifacts/val
-  
-  python scripts/extract_features.py --csv splits/test.csv  --out artifacts/test
+    python scripts/extract_features.py --csv splits/train.csv --out artifacts/train
+    
+    python scripts/extract_features.py --csv splits/val.csv   --out artifacts/val
+    
+    python scripts/extract_features.py --csv splits/test.csv  --out artifacts/test
 
   ### 3) Fit scaler + train model + sanity check
   
-  python scripts/fit_scaler.py
+    python scripts/fit_scaler.py
   
-  python scripts/train_model.py
+    python scripts/train_model.py
   
-  python scripts/check_artifacts.py
+    python scripts/check_artifacts.py
 
   ### 4) Run the app locally
   
-  uvicorn app.api:app --reload
+    uvicorn app.api:app --reload
 
-#File Structure 
+# File Structure 
 
+<details>
+  <summary><b>File Structure</b></summary>
+
+```text
 genre-mapper/
 ├─ app/
-│  ├─ api.py              # FastAPI routes + dark UI
-│  └─ infer_core.py       # download/clip, features, scaler+model inference
+│  ├─ api.py               
+│  └─ infer_core.py        
 ├─ artifacts/
-│  ├─ model.pkl           # trained Linear SVM
-│  ├─ scaler.pkl          # StandardScaler (fit on Train only)
-│  ├─ feature_order.json  # locked feature order for inference
-│  ├─ label_map.json      # class index ↔ genre
-│  └─ metrics.txt         # Test Accuracy / Macro-F1
+│  ├─ model.pkl           
+│  ├─ scaler.pkl           
+│  ├─ feature_order.json   
+│  ├─ label_map.json       
+│  └─ metrics.txt         
 ├─ data/
-│  └─ gtzan/              # GTZAN 30s clips (not in repo)
+│  └─ gtzan/               # GTZAN 30s clips (not in repo)
 ├─ scripts/
 │  ├─ make_metadata_gtzan.py
 │  ├─ validate_metadata.py
@@ -85,7 +90,7 @@ genre-mapper/
 │  ├─ fit_scaler.py
 │  ├─ train_model.py
 │  ├─ check_artifacts.py
-│  └─ youtube_fetch_clip.py   # add 30s clips by genre to expand dataset
+│  └─ youtube_fetch_clip.py # add 30s clips by genre to expand dataset
 ├─ splits/
 │  ├─ train.csv
 │  ├─ val.csv
